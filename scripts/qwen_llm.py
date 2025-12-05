@@ -232,6 +232,7 @@ class qwen_llm():
                 modalities=["text"],
                 stream=True,
                 stream_options={"include_usage": True},
+                temperature= 0.1,
                 )
             response=self.get_full_content(completion)
             return response
@@ -248,7 +249,7 @@ class qwen_llm():
             return
         try:
             self.response=self.run_model(question,image)
-            # print(self.response)
+            print(self.response)
             if self.mode == "detector":
                 annotated_image_bytes = self.draw_normalized_bounding_boxes(image, self.response)
                 # Convert bytes back to PIL Image and display
@@ -313,7 +314,20 @@ if __name__=="__main__":
     # ), image=image)
     # print(describer.response)
 
-    chatter = qwen_llm("chatter")
-    question = "停車場的保安人員,關於停車場環境請列出兩項你需要注意的事項 "
-    chatter.action(question=question)
-    print(chatter.response)
+    # chatter = qwen_llm("chatter")
+    # question = "停車場的保安人員,關於停車場環境請列出兩項你需要注意的事項 "
+    # chatter.action(question=question)
+    # print(chatter.response)
+
+    image="images/output_1.png"
+    # detection_list=["unclosed emergency exit door"]
+    # talker=qwen_llm("detector",detection_list)
+    # talker.action(image=image)
+
+    talker=qwen_llm("image description")
+    talker.action(question="You are a security guard of a factory reviewing the image. Follow instructions exactly and output only the required observations no explanation, no reasoning, no extra text."
+                            "1) If any door is visible, report whether door is closed, if none are visible, state \"No door visible\"."
+                            "2) Provide exactly two additional distinct security-relevant observations. Do not repeat observations and keep each one short."
+                            "3) For every observation, append whether it requires immediate handling: \"yes\" or \"no\" (only yes/no)."
+                            "4) Output format: three separate lines, each line exactly: <observation>, <yes|no>"
+                            "- use minimal phrasing (no full sentences, no labels, no numbering).",image=image)
